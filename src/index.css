@@ -1,4 +1,4 @@
-.image-tool {
+.panorama-tool {
   --bg-color: #cdd1e0;
   --front-color: #388ae5;
   --border-color: #e8e8eb;
@@ -120,6 +120,7 @@
    * Tunes
    * ----------------
    */
+
   &--stretched {
     ^&__image {
       &-picture {

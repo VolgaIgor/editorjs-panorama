@@ -1,9 +1,9 @@
 /**
- * Image Tool for the Editor.js
+ * Panorama Tool for the Editor.js
  *
- * @author CodeX <team@codex.so>
+ * @author Igor Shuvalov «VolgaIgor» & CodeX <team@codex.so>
  * @license MIT
- * @see {@link https://github.com/editor-js/image}
+ * @see {@link https://github.com/VolgaIgor/editorjs-panorama}
  *
  * To developers.
  * To simplify Tool structure, we split it to 4 parts:
@@ -12,19 +12,11 @@
  *  3) ui.js — module for UI manipulations: render, showing preloader, etc
  *  4) tunes.js — working with Block Tunes: render buttons, handle clicks
  *
- * For debug purposes there is a testing server
- * that can save uploaded files and return a Response {@link UploadResponseFormat}
- *
- *       $ node dev/server.js
- *
- * It will expose 8008 port, so you can pass http://localhost:8008 with the Tools config:
- *
  * image: {
  *   class: Panorama,
  *   config: {
  *     endpoints: {
  *       byFile: 'http://localhost:8008/uploadFile',
- *       byUrl: 'http://localhost:8008/fetchUrl',
  *     }
  *   },
  * },
@@ -45,14 +37,13 @@ import Ui from './ui';
 import Uploader from './uploader';
 
 import { IconStretch } from '@codexteam/icons';
-import IconPicture from './svg/Icon.svg';
+import IconPicture from './svg/Icon.svg?raw';
 
 /**
  * @typedef {object} ImageConfig
  * @description Config supported by Tool
  * @property {object} endpoints - upload endpoints
  * @property {string} endpoints.byFile - upload by file
- * @property {string} endpoints.byUrl - upload by URL
  * @property {string} field - field name for uploaded image
  * @property {string} types - available mime-types
  * @property {string} captionPlaceholder - placeholder for Caption field
@@ -72,7 +63,7 @@ import IconPicture from './svg/Icon.svg';
  *                           also can contain any additional data that will be saved and passed back
  * @property {string} file.url - [Required] image source URL
  */
-export default class Panorama {
+export default class ImageTool {
   /**
    * Notify core that read-only mode is supported
    *
@@ -118,10 +109,12 @@ export default class Panorama {
    * @param {ImageConfig} tool.config - user config for Tool
    * @param {object} tool.api - Editor.js API
    * @param {boolean} tool.readOnly - read-only mode flag
+   * @param {BlockAPI|{}} tool.block - current Block API
    */
-  constructor({ data, config, api, readOnly }) {
+  constructor({ data, config, api, readOnly, block }) {
     this.api = api;
     this.readOnly = readOnly;
+    this.block = block;
 
     /**
      * Tool's initial config
@@ -217,7 +210,7 @@ export default class Panorama {
   renderSettings() {
     // Merge default tunes with the ones that might be added by user
     // @see https://github.com/editor-js/image/pull/49
-    const tunes = Panorama.tunes.concat(this.config.actions);
+    const tunes = ImageTool.tunes.concat(this.config.actions);
 
     return tunes.map(tune => ({
       icon: tune.icon,
@@ -265,7 +258,7 @@ export default class Panorama {
     this._data.caption = data.caption || '';
     this.ui.fillCaption(this._data.caption);
 
-    Panorama.tunes.forEach(({ name: tune }) => {
+    ImageTool.tunes.forEach(({ name: tune }) => {
       const value = typeof data[tune] !== 'undefined' ? data[tune] === true || data[tune] === 'true' : false;
 
       this.setTune(tune, value);
@@ -361,9 +354,7 @@ export default class Panorama {
        * Wait until the API is ready
        */
       Promise.resolve().then(() => {
-        const blockId = this.api.blocks.getCurrentBlockIndex();
-
-        this.api.blocks.stretchBlock(blockId, value);
+        this.block.stretched = value;
       })
         .catch(err => {
           console.error(err);

@@ -63,11 +63,11 @@ export default class Ui {
       /**
        * Tool's classes
        */
-      wrapper: 'image-tool',
-      imageContainer: 'image-tool__image',
-      imagePreloader: 'image-tool__image-preloader',
-      imageEl: 'image-tool__image-picture',
-      caption: 'image-tool__caption',
+      wrapper: 'panorama-tool',
+      imageContainer: 'panorama-tool__image',
+      imagePreloader: 'panorama-tool__image-preloader',
+      imageEl: 'panorama-tool__image-picture',
+      caption: 'panorama-tool__caption',
     };
   };
 

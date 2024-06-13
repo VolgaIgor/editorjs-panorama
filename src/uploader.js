@@ -2,10 +2,8 @@ import ajax from '@codexteam/ajax';
 import isPromise from './utils/isPromise';
 
 /**
- * Module for file uploading. Handle 3 scenarios:
+ * Module for file uploading. Handle 1 scenario:
  *  1. Select file from device and upload
- *  2. Upload by pasting URL
- *  3. Upload by pasting file from Clipboard or by Drag'n'Drop
  */
 export default class Uploader {
   /**
